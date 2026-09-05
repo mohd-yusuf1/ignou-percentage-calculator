@@ -220,6 +220,6 @@ app.post('/api/calculate', (req, res) => {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`IGNOU Percentage Calculator backend running on port ${PORT}`);
 });

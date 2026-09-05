@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.your-domain-here.com/sitemap.xml
+Sitemap: https://ignou-percentage-calculator.pages.dev/sitemap.xml
