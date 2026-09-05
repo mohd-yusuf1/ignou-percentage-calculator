@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ===== Primary SEO ===== -->
+  <title>IGNOU Percentage Calculator — Calculate Your Real IGNOU % Instantly</title>
+  <meta
+    name="description"
+    content="Free IGNOU percentage calculator. Fetch your grade card automatically or upload the PDF and instantly calculate your real IGNOU percentage using the official 30% assignment + 70% term-end weighting formula."
+  />
+  <meta
+    name="keywords"
+    content="IGNOU percentage calculator, IGNOU grade card, IGNOU percentage, calculate IGNOU marks, IGNOU CGPA to percentage, IGNOU result calculator, IGNOU grade card percentage, IGNOU marksheet calculator"
+  />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="author" content="IGNOU%" />
+  <meta name="language" content="English" />
+  <link rel="canonical" href="https://www.your-domain-here.com/" />
+
+  <!-- ===== Icons / theme ===== -->
+  <link rel="icon" type="image/svg+xml" href="/frontend/assets/logo.svg" />
+  <link rel="apple-touch-icon" href="/frontend/assets/logo.svg" />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- ===== Open Graph (Facebook, LinkedIn, WhatsApp, etc.) ===== -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="IGNOU%" />
+  <meta property="og:title" content="IGNOU Percentage Calculator — Calculate Your Real IGNOU %" />
+  <meta
+    property="og:description"
+    content="Fetch your grade card automatically or upload the PDF and instantly calculate your real IGNOU percentage using the correct course weighting system."
+  />
+  <meta property="og:url" content="https://www.your-domain-here.com/" />
+  <meta property="og:image" content="https://www.your-domain-here.com/frontend/assets/logo.svg" />
+  <meta property="og:locale" content="en_IN" />
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="IGNOU Percentage Calculator — Calculate Your Real IGNOU %" />
+  <meta
+    name="twitter:description"
+    content="Fetch your grade card automatically or upload the PDF and instantly calculate your real IGNOU percentage."
+  />
+  <meta name="twitter:image" content="https://www.your-domain-here.com/frontend/assets/logo.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- ===== Structured data (JSON-LD) ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "IGNOU%",
+    "url": "https://www.your-domain-here.com/",
+    "description": "Free tool to calculate your real IGNOU percentage from your grade card, using the official assignment and term-end marks weighting system.",
+    "applicationCategory": "EducationApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this an official IGNOU website?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. IGNOU% is an independent tool. Always verify your final result against your official IGNOU grade card and marksheet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you store my enrollment number?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The frontend does not intentionally store your enrollment number. It is used only to retrieve your grade card."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I upload my grade card instead?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Download your grade card PDF from IGNOU, select your programme category and upload the PDF."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the calculated percentage accurate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The result is an estimated calculation. Use it as a convenient reference and verify it against official IGNOU documentation."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="/" class="brand" aria-label="IGNOU Percentage Calculator">
+      <img
+        src="/frontend//assets/logo.svg"
+        alt="IGNOU Percentage Calculator"
+        class="brand-logo"
+      >
+    </a>
+
+    <button
+      class="mobile-menu-btn"
+      id="mobileMenuBtn"
+      type="button"
+      aria-label="Open menu"
+    >
+      ☰
+    </button>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#" class="active">Home</a>
+      <a href="#upload">Upload PDF</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#faq">FAQ</a>
+
+      <a href="#contact" class="nav-message-btn">
+        <span>✉</span>
+        Send Message
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- =====================================================
+     HERO + FETCH
+===================================================== -->
+
+<section class="hero-fetch-section">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-content">
+        <span class="eyebrow">
+          IGNOU GRADE CARD CALCULATOR
+        </span>
+        <h1>
+          Your grade card gives you letters and marks.
+          <span>Not the number you actually need.</span>
+        </h1>
+        <p class="dek">
+          Calculate your actual IGNOU percentage using the correct
+          weighting system. Fetch your grade card automatically or
+          upload your PDF and let us do the calculation.
+        </p>
+        <div class="hero-features">
+          <div class="hero-feature">
+            <span class="feature-icon">✓</span>
+            <div>
+              <strong>Simple</strong>
+              <small>No manual calculation</small>
+            </div>
+          </div>
+
+          <div class="hero-feature">
+            <span class="feature-icon">⚡</span>
+            <div>
+              <strong>Fast</strong>
+              <small>Get your result quickly</small>
+            </div>
+          </div>
+
+          <div class="hero-feature">
+            <span class="feature-icon">◎</span>
+            <div>
+              <strong>Accurate</strong>
+              <small>Uses course weighting</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FETCH -->
+  <section class="panel fetch-panel" id="fetch">
+    <div class="wrap">
+      <div class="fetch-card">
+        <div class="panel-head">
+          <span class="tag">
+            OPTION 1
+          </span>
+
+          <h2>
+            Fetch it automatically
+          </h2>
+
+          <p>
+            Enter your programme and enrollment number.
+            We'll retrieve the grade card from the IGNOU portal.
+          </p>
+        </div>
+
+        <form id="scrapeForm" class="card">
+          <label>
+            Category
+            <select id="scrapeCategory" required>
+              <option value="" disabled selected>
+                Choose category
+              </option>
+
+              <option value="bca_mca_mp_mpb_pgdca_mba">
+                BCA/MCA/MP/MPB/PGDCA/MBA/MBF
+              </option>
+
+              <option value="bdp_ba_bcom_bsc_asso">
+                BDP/BA/B.COM/B.Sc./ASSO
+              </option>
+
+              <option value="cbcs">
+                CBCS Programmes
+              </option>
+
+              <option value="other">
+                Other Programmes
+              </option>
+            </select>
+          </label>
+
+          <label>
+            Programme code
+            <input
+              id="scrapeProgramCode"
+              type="text"
+              placeholder="e.g. BCA"
+              required
+            />
+          </label>
+
+          <label>
+            Enrollment number
+            <input
+              id="scrapeEnrollment"
+              type="text"
+              inputmode="numeric"
+              placeholder="9–10 digit enrollment number"
+              pattern="\d{9,10}"
+              required
+            />
+          </label>
+
+          <p class="hint">
+            Your enrollment number is used only to retrieve
+            your grade card.
+          </p>
+
+          <button type="submit" class="primary-btn">
+            Fetch &amp; Calculate
+            <span>→</span>
+          </button>
+
+          <p
+            class="form-error"
+            id="scrapeError"
+            hidden
+          ></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- =====================================================
+     UPLOAD PDF
+===================================================== -->
+<section class="panel alt" id="upload">
+  <div class="wrap">
+    <div class="upload-layout">
+      <div class="panel-head">
+        <span class="tag">
+          OPTION 2
+        </span>
+
+        <h2>
+          Upload your grade card PDF
+        </h2>
+
+        <p>
+          Already downloaded your grade card?
+          Upload it here and we'll read the course table
+          automatically.
+        </p>
+      </div>
+
+      <form id="uploadForm" class="upload-card">
+        <label>
+          Category
+          <select id="uploadCategory" required>
+            <option value="" disabled selected>
+              Choose category
+            </option>
+
+            <option value="bca_mca_mp_mpb_pgdca_mba">
+              BCA/MCA/MP/MPB/PGDCA/MBA/MBF
+            </option>
+
+            <option value="bdp_ba_bcom_bsc_asso">
+              BDP/BA/B.COM/B.Sc./ASSO
+            </option>
+
+            <option value="cbcs">
+              CBCS Programmes
+            </option>
+
+            <option value="other">
+              Other Programmes
+            </option>
+          </select>
+        </label>
+
+
+        <label class="dropzone" id="dropzone">
+          <input
+            type="file"
+            id="pdfInput"
+            accept="application/pdf"
+            hidden
+          />
+
+          <div class="upload-icon">
+            ↑
+          </div>
+
+          <span id="dropzoneLabel">
+            Drop your grade card PDF here
+            <small>or click to browse</small>
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          class="primary-btn"
+        >
+          Read PDF &amp; Calculate
+          <span>→</span>
+        </button>
+
+        <p
+          class="form-error"
+          id="uploadError"
+          hidden
+        ></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section class="info-section" id="how-it-works">
+  <div class="wrap">
+    <div class="section-heading">
+      <span class="eyebrow">
+        HOW IT WORKS
+      </span>
+
+      <h2>
+        Three steps. That's it.
+      </h2>
+
+      <p>
+        No spreadsheet. No calculator. No guessing.
+      </p>
+    </div>
+
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-number">
+          01
+        </span>
+
+        <h3>
+          Choose a method
+        </h3>
+
+        <p>
+          Fetch your grade card automatically or upload
+          the PDF downloaded from IGNOU.
+        </p>
+      </div>
+
+      <div class="step">
+        <span class="step-number">
+          02
+        </span>
+
+        <h3>
+          We read the marks
+        </h3>
+
+        <p>
+          Your course-wise continuous assessment and
+          term-end marks are extracted.
+        </p>
+      </div>
+
+
+      <div class="step">
+        <span class="step-number">
+          03
+        </span>
+
+        <h3>
+          Get your percentage
+        </h3>
+
+        <p>
+          The marks are weighted according to the selected
+          programme calculation method.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     RESULTS
+===================================================== -->
+
+<section class="panel results" id="results" hidden>
+  <div class="wrap">
+    <div class="result-top">
+      <div class="result-meta">
+        <span class="result-label">CALCULATED RESULT</span>
+        <p id="resultName" class="result-name"></p>
+        <p id="resultProgramme" class="muted"></p>
+        <p id="resultFormula" class="muted"></p>
+      </div>
+
+      <div class="big-number-wrap">
+        <div class="big-number">
+          <span id="resultPercent">--</span>
+          <span class="pct-sign">%</span>
+        </div>
+        <span class="percentage-label">YOUR PERCENTAGE</span>
+      </div>
+    </div>
+
+    <div class="stat-row" id="statRow"></div>
+
+    <div class="table-head-row">
+      <h3>Course-wise breakdown</h3>
+      <button type="button" id="printBtn">Print result</button>
+    </div>
+
+    <div class="table-scroll">
+      <table class="course-table">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Type</th>
+            <th>Continuous</th>
+            <th>Term-End</th>
+            <th>Weighted %</th>
+          </tr>
+        </thead>
+        <tbody id="resultTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     FAQ
+===================================================== -->
+
+<section class="info-section faq-section" id="faq">
+  <div class="wrap">
+    <div class="section-heading">
+      <span class="eyebrow">FAQ</span>
+      <h2>Frequently asked questions</h2>
+    </div>
+
+    <div class="faq-list">
+      <details>
+        <summary>
+          Is this an official IGNOU website?
+          <span>+</span>
+        </summary>
+
+        <p>
+          No. IGNOU% is an independent tool.
+          Always verify your final result against your official
+          IGNOU grade card and marksheet.
+        </p>
+      </details>
+
+      <details>
+        <summary>
+          Do you store my enrollment number?
+          <span>+</span>
+        </summary>
+
+        <p>
+          The frontend does not intentionally store your
+          enrollment number. It is used to retrieve your
+          grade card.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>
+          Can I upload my grade card instead?
+          <span>+</span>
+        </summary>
+
+        <p>
+          Yes. Download your grade card PDF from IGNOU,
+          select your programme category and upload the PDF.
+        </p>
+      </details>
+
+
+      <details>
+        <summary>
+          Is the calculated percentage accurate?
+          <span>+</span>
+        </summary>
+
+        <p>
+          The result is an estimated calculation. Use it
+          as a convenient reference and verify it against
+          official IGNOU documentation.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- =====================================================
+     CONTACT
+===================================================== -->
+
+<section class="contact-section" id="contact">
+  <div class="wrap">
+    <div class="contact-layout">
+      <div class="contact-copy">
+        <span class="eyebrow">GET IN TOUCH</span>
+
+        <h2>
+          Found something wrong?
+          Have an idea?
+        </h2>
+
+        <p>
+          If you notice a calculation issue, have a programme
+          that isn't supported, or simply want to suggest
+          an improvement, send us a message.
+        </p>
+
+        <div class="contact-note">
+          <span>✉</span>
+          <div>
+            <strong>We read every message.</strong>
+            <small>Your feedback helps improve this tool.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form" id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <span>Your name</span>
+              <input
+                type="text"
+                id="contactName"
+                placeholder="Your name"
+              >
+          </div>
+
+          <div class="form-group">
+            <span>Your email</span>
+              <input
+                  type="email"
+                  id="contactEmail"
+                  placeholder="you@example.com"
+              >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <span>Subject</span>
+          <input
+            type="text"
+            id="contactSubject"
+            placeholder="What would you like to tell us?"
+          >
+        </div>
+
+        <div class="form-group">
+          <span>Message</span>
+          <textarea
+            id="contactMessage"
+            rows="6"
+            placeholder="Write your message here..."
+          ></textarea>
+        </div>
+
+        <button
+          type="button"
+          class="primary-btn"
+          id="contactSendBtn"
+        >
+          Send Message
+        <span>→</span>
+        </button>
+        </div>
+      </div>
+  </div>
+</section>
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        <a href="/" class="brand" aria-label="IGNOU Percentage Calculator">
+          <img
+              src="/frontend/assets/logo.svg"
+              alt="IGNOU Percentage Calculator"
+              class="brand-logo"
+          >
+        </a>
+
+        <p>
+          A simple tool for understanding
+          your IGNOU grade card percentage.
+        </p>
+      </div>
+
+      <div class="footer-links">
+
+        <div>
+          <h4>Calculator</h4>
+          <a href="#fetch">Fetch Grade Card</a>
+          <a href="#upload">Upload PDF</a>
+          <a href="#how-it-works">How It Works</a>
+        </div>
+
+        <div>
+          <h4>Help</h4>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <div>
+          <h4>Connect</h4>
+
+          <div class="footer-social">
+            <a
+              href="https://github.com/mohd-yusuf1"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              title="GitHub"
+            >
+              <i class="fa-brands fa-github"></i>
+              <span>GitHub</span>
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/mohammad-yusuf-8419b9333/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              title="LinkedIn"
+            >
+              <i class="fa-brands fa-linkedin-in"></i>
+              <span>LinkedIn</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>
+        © <span id="currentYear"></span> IGNOU%.
+        All rights reserved.
+      </p>
+
+      <p>
+        This tool. Not affiliated with IGNOU.
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="config.js"></script>
+<script src="script.js"></script>
+
+<script>
+  /* Current year */
+  document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+  /* Mobile navigation */
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+  const mainNav = document.getElementById("mainNav");
+  mobileMenuBtn?.addEventListener("click", () => {
+    mainNav.classList.toggle("open");
+  });
+
+  /* Close mobile menu after clicking */
+  mainNav?.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+      mainNav.classList.remove("open");
+    });
+  });
+
+  /* Contact "send message" via email */
+  const contactSendBtn = document.getElementById("contactSendBtn");
+
+  contactSendBtn?.addEventListener("click", () => {
+    const name = document.getElementById("contactName")?.value.trim();
+    const email = document.getElementById("contactEmail")?.value.trim();
+    const subject = document.getElementById("contactSubject")?.value.trim();
+    const message = document.getElementById("contactMessage")?.value.trim();
+
+    if (!name || !email || !subject || !message) {
+      alert("Please fill in every field before sending.");
+      return;
+    }
+
+    const mailSubject = encodeURIComponent(
+      `Message from IGNOU Calculator: ${subject}`
+    );
+
+    const mailBody = encodeURIComponent(
+      `Name: ${name}\n` +
+      `Email: ${email}\n\n` +
+      `Message:\n${message}`
+    );
+
+    window.location.href =
+      `mailto:yusufsheikh5348309@gmail.com?subject=${mailSubject}&body=${mailBody}`;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">IGNOU Percentage Calculator</title>
+  <desc id="logoDesc">IGNOU percentage calculator logo with IGNOU percent mark.</desc>
+
+  <rect width="220" height="64" rx="12" fill="#1E2A22"/>
+
+  <!-- Graduation-cap / academic mark -->
+  <path d="M18 27.5 39 18l21 9.5-21 9.5-21-9.5Z" fill="#EFE8D8"/>
+  <path d="M25 32v8.5c0 3.7 6.3 7 14 7s14-3.3 14-7V32l-14 6.4L25 32Z" fill="#EFE8D8"/>
+  <path d="M60 29v12" stroke="#EFE8D8" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="43" r="2.5" fill="#EFE8D8"/>
+
+  <!-- Wordmark -->
+  <text x="78" y="41"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="27"
+        font-weight="800"
+        letter-spacing="-1"
+        fill="#EFE8D8">IGNOU</text>
+  <text x="166" y="41"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="28"
+        font-weight="800"
+        fill="#C7BB9E">%</text>
+</svg>
