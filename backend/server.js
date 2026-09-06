@@ -1,29 +1,3 @@
-// server.js
-// Backend for the IGNOU Percentage Calculator.
-//
-// CONFIRMED from real portal screenshots (thank you for these — much better
-// than my earlier guess):
-//   1. Login/search form:  https://gradecard.ignou.ac.in/login.aspx
-//      Fields: Category dropdown, Programme Code dropdown, Enrolment No.
-//   2. Submitting takes you to a plain GET URL with query params:
-//      https://gradecard.ignou.ac.in/view_gradecard.aspx?eno=<enrollment>&prog=<programCode>&type=<categoryType>
-//      confirmed example: view_gradecard.aspx?eno=2251067639&prog=BCA&type=1
-//
-// That's actually simpler than a WebForms postback — no __VIEWSTATE needed
-// for the result page. The 403 you hit was from using plain axios, which
-// doesn't execute JS, hold a real browser session, or send the same
-// fingerprint as Chrome — IGNOU's server (or a WAF in front of it) rejected
-// it as a bot. This version uses Puppeteer (a real headless Chrome) instead,
-// which should get past that.
-//
-// Still worth verifying yourself, since I still can't load the live site:
-//  - `type=1` for the BCA/MCA/MP/MPB/PGDCA/MBA category is confirmed by your
-//    screenshot. VERIFY the other 3 categories' `type` values by picking
-//    each one on https://gradecard.ignou.ac.in/login.aspx and reading the
-//    resulting URL — much easier now that it's a visible query param.
-//  - `prog` is the exact Programme Code as the portal's own dropdown lists
-//    it (e.g. "BCA") — pass it through as typed.
-
 const express = require('express');
 const cors = require('cors');
 const cheerio = require('cheerio');
@@ -44,61 +18,127 @@ const PORT = process.env.PORT || 3001;
 const LOGIN_URL = 'https://gradecard.ignou.ac.in/login.aspx';
 const GRADECARD_BASE = 'https://gradecard.ignou.ac.in/view_gradecard.aspx';
 
-// VERIFY the 3 values below (not "1") by checking the URL after picking each
-// category on the login page — "1" is confirmed correct from your screenshot.
 const CATEGORY_TYPE = {
-  bca_mca_mp_mpb_pgdca_mba: '1', // confirmed: "For BCA/MCA/MCA_NEW/MP/MPB/PGDCA/..."
-  bdp_ba_bcom_bsc_asso: '2', // VERIFY
-  cbcs: '3', // VERIFY
-  other: '4', // VERIFY
+  bca_mca_mp_mpb_pgdca_mba: '1',
+  bdp_ba_bcom_bsc_asso: '2',
+  cbcs: '3',
+  other: '4',
 };
 
 const CHROME_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
-/**
- * Visit the login page first (to pick up any session cookie / pass any JS
- * challenge), then navigate directly to the known view_gradecard.aspx URL
- * pattern with a real Referer header, using a real headless browser.
- */
-async function scrapeGradeCard({ categoryType, programCode, enrollment }) {
-  const browser = await puppeteer.launch({
+/* --------------------------------------------------------------------
+   PERSISTENT BROWSER INSTANCE
+   Launching Chromium is the single most expensive part of the old flow
+   (several seconds on Render's free CPU, on top of cold starts). Instead
+   of launch()/close() on every request, we keep one browser process
+   alive for the life of the server and just open/close pages per
+   request. If the browser process dies or disconnects, we relaunch it
+   lazily on the next request.
+-------------------------------------------------------------------- */
+let browserPromise = null;
+
+async function getBrowser() {
+  if (browserPromise) {
+    const existing = await browserPromise;
+    if (existing.isConnected()) return existing;
+    browserPromise = null; // fall through and relaunch
+  }
+
+  browserPromise = puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage', // avoids /dev/shm OOM issues on small containers
+      '--disable-gpu',
+      '--single-process', // trims memory footprint on 512MB Render free tier
+    ],
   });
 
+  const browser = await browserPromise;
+
+  browser.on('disconnected', () => {
+    // Ensures the next getBrowser() call relaunches instead of reusing a dead ref.
+    browserPromise = null;
+  });
+
+  return browser;
+}
+
+// Launch eagerly on boot so the first real request doesn't pay Chromium's
+// startup cost on top of everything else. If it fails, getBrowser() will
+// retry on demand.
+getBrowser().catch((err) => console.error('Initial browser launch failed:', err.message));
+
+/**
+ * Visit the login page first, then navigate to the gradecard URL with a
+ * real Referer, using a persistent browser but a fresh page/tab per
+ * request (so requests can't see each other's state).
+ *
+ * Wait strategy: 'networkidle2' waited for network silence, which is
+ * often the slowest possible condition on pages with analytics/trackers.
+ * We now wait for 'domcontentloaded' (DOM is parsed, fast) and then poll
+ * for either the results table or a recognizable "not found" marker to
+ * actually appear, with a hard timeout as a safety net.
+ */
+async function scrapeGradeCard({ categoryType, programCode, enrollment }) {
+  const browser = await getBrowser();
+  const page = await browser.newPage();
+
   try {
-    const page = await browser.newPage();
     await page.setUserAgent(CHROME_UA);
     await page.setExtraHTTPHeaders({ 'Accept-Language': 'en-US,en;q=0.9' });
 
-    await page.goto(LOGIN_URL, { waitUntil: 'networkidle2', timeout: 20000 });
+    // Block images/fonts/stylesheets — we only need the HTML/text content,
+    // and this cuts real network time on the ASP.NET pages noticeably.
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const type = req.resourceType();
+      if (type === 'image' || type === 'font' || type === 'stylesheet' || type === 'media') {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
+    await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded', timeout: 15000 });
 
     const targetUrl = `${GRADECARD_BASE}?eno=${encodeURIComponent(enrollment)}&prog=${encodeURIComponent(
       programCode
     )}&type=${encodeURIComponent(categoryType)}`;
 
     await page.goto(targetUrl, {
-      waitUntil: 'networkidle2',
-      timeout: 20000,
+      waitUntil: 'domcontentloaded',
+      timeout: 15000,
       referer: LOGIN_URL,
     });
+
+    // Give the page a short, bounded window to finish any client-side
+    // rendering (e.g. postback/AJAX) rather than waiting on network idle.
+    // If a course table or the "Name:" text shows up sooner, we don't wait
+    // the full timeout.
+    try {
+      await page.waitForFunction(
+        () => {
+          const text = document.body.innerText || '';
+          return document.querySelectorAll('table tr').length > 1 || /Name:/i.test(text);
+        },
+        { timeout: 8000 }
+      );
+    } catch {
+      // Timed out waiting for the expected content — proceed anyway and
+      // let parseGradeCardHtml / the empty-result path handle it below.
+    }
 
     const html = await page.content();
     return html;
   } finally {
-    await browser.close();
+    await page.close();
   }
 }
 
-/**
- * Parse the result HTML into { name, enrollment, programCode, courses }.
- * Confirmed against a real screenshot of view_gradecard.aspx: the header row
- * reads "Enrolment No: ...   Name: ...   Programme Code: ..." as plain text,
- * and the table columns are exactly Course, Asgn1, LAB1, LAB2, LAB3, LAB4,
- * TERM END THEORY, TERM END PRACTICAL, STATUS — matching the sample PDF, so
- * the column-index parsing below should already be correct.
- */
 function parseGradeCardHtml(html) {
   const $ = cheerio.load(html);
   const pageText = $('body').text().replace(/\s+/g, ' ');
@@ -118,7 +158,6 @@ function parseGradeCardHtml(html) {
       .map((_, td) => $(td).text().trim())
       .get();
 
-    // Skip header rows / rows that don't look like course data
     if (cells.length < 7) return;
     const code = cells[0];
     if (!code || !/^[A-Z]{2,6}[0-9A-Z]{2,4}$/.test(code)) return;
@@ -167,10 +206,6 @@ app.post('/api/scrape', async (req, res) => {
     const parsed = parseGradeCardHtml(resultHtml);
 
     if (!parsed.courses.length) {
-      // The portal recognised this enrolment number (it returned a name/
-      // enrolment/programme code) but has no course rows for it yet — this
-      // is a *valid* student who simply hasn't appeared for/been awarded any
-      // exam result yet. That's a normal, expected state, not an error.
       const studentFound = Boolean(parsed.name || parsed.enrollment || parsed.programCode);
 
       if (studentFound) {
@@ -184,8 +219,6 @@ app.post('/api/scrape', async (req, res) => {
         });
       }
 
-      // Nothing at all came back — this really does look like a wrong
-      // category, programme code, or enrollment number.
       return res.status(404).json({
         error:
           "We couldn't find any student record for this enrollment number, programme code, and category combination. Please double-check your details and try again.",
@@ -210,7 +243,6 @@ app.post('/api/scrape', async (req, res) => {
   }
 });
 
-// Manual entry / PDF-parsed entry — same calculation engine, no scraping.
 app.post('/api/calculate', (req, res) => {
   const { category, courses } = req.body || {};
   if (!category || !CATEGORY_CONFIG[category]) {
@@ -225,6 +257,24 @@ app.post('/api/calculate', (req, res) => {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`IGNOU Percentage Calculator backend running on port ${PORT}`);
 });
+
+// Clean shutdown: close the persistent browser too, so Render doesn't
+// leave a zombie Chromium process hanging around on redeploy/restart.
+async function shutdown() {
+  console.log('Shutting down...');
+  try {
+    if (browserPromise) {
+      const browser = await browserPromise;
+      await browser.close();
+    }
+  } catch (err) {
+    console.error('Error closing browser during shutdown:', err.message);
+  }
+  server.close(() => process.exit(0));
+}
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
