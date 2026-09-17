@@ -2,11 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
+const multer = require('multer'); // For handling file uploads in mobile app
+const pdfParse = require('pdf-parse'); // For parsing PDF files in mobile app
 const { calculatePercentage, calculateCGPA, CATEGORY_CONFIG } = require('./calc');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
@@ -28,6 +32,9 @@ const CATEGORY_TYPE = {
 const CHROME_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
+// For mobile app PDF parsing: regex to extract course rows from the text dump of a grade card PDF.
+const COURSE_ROW_RE =
+  /([A-Z]{2,8}\d{2,4}[A-Z]?)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d-]+)\s+([\d-]+)\s+(\d+)\s+(\d+)\s+(COMPLETED|NOT\s*COMPLETED|INCOMPLETE)/g;
 /* --------------------------------------------------------------------
    PERSISTENT BROWSER INSTANCE
    Launching Chromium is the single most expensive part of the old flow
@@ -175,6 +182,24 @@ function parseGradeCardHtml(html) {
   return { name, enrollment, programCode, courses };
 }
 
+// For mobile app PDF parsing: extract course rows from the text dump of a grade card PDF.
+function parseCoursesFromText(text) {
+  const courses = [];
+  let match;
+  while ((match = COURSE_ROW_RE.exec(text)) !== null) {
+    const [, code, asgn1, lab1, , , , teeTheory, teePractical, status] = match;
+    courses.push({
+      code,
+      asgn1: Number(asgn1),
+      lab1: Number(lab1),
+      teeTheory: Number(teeTheory),
+      teePractical: Number(teePractical),
+      status: status.replace(/\s+/g, ' '),
+    });
+  }
+  return courses;
+}
+
 app.get('/api/categories', (req, res) => {
   const categories = Object.entries(CATEGORY_CONFIG).map(([id, cfg]) => ({
     id,
@@ -253,6 +278,31 @@ app.post('/api/calculate', (req, res) => {
   }
   const result = calculatePercentage(category, courses);
   res.json(result);
+});
+
+// For mobile app: parse a PDF grade card file uploaded by the user, extract course data, and return it.
+app.post('/api/parse-pdf', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No PDF file received.' });
+  }
+
+  try {
+    const { text } = await pdfParse(req.file.buffer);
+    const cleanedText = text.replace(/\s+/g, ' ');
+    const courses = parseCoursesFromText(cleanedText);
+
+    if (!courses.length) {
+      return res.status(422).json({
+        error:
+          "Couldn't find a course table in this PDF. Double-check it's an IGNOU grade card export.",
+      });
+    }
+
+    res.json({ courses });
+  } catch (err) {
+    console.error('PDF parse failed:', err.message);
+    res.status(500).json({ error: 'Could not read this PDF. Please try a different file.' });
+  }
 });
 
 // CGPA is computed from courses that have ALREADY been scored (i.e. the
