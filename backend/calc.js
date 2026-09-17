@@ -120,4 +120,120 @@ function calculatePercentage(category, courses) {
   };
 }
 
-module.exports = { calculatePercentage, classifyCourse, scoreCourse, CATEGORY_CONFIG };
+// ---------------------------------------------------------------------
+// CGPA / Grade Point calculation
+// ---------------------------------------------------------------------
+// IGNOU's grade card never exposes course credits on the page we scrape —
+// there is also no single official, machine-readable source listing the
+// credit value of every course code across every programme. So credits
+// are collected directly from the student (see /api/cgpa in server.js)
+// rather than looked up automatically here.
+//
+// The percentage -> letter grade -> grade point table below is NOT an
+// officially published IGNOU document we were able to verify — it's the
+// 10-point scale (A=10 down to F=5) used consistently across third-party
+// IGNOU CGPA guides and calculators. Some older / non-CBCS programmes are
+// reported to use a different (5-point) scale, so treat this as a
+// best-effort default rather than a guarantee. It's a one-line edit here
+// if a student's official grade card shows different grade points for the
+// same percentage on their programme.
+const GRADE_SCALE = [
+  { min: 80, grade: 'A', gradePoint: 10, label: 'Excellent' },
+  { min: 70, grade: 'B', gradePoint: 9, label: 'Very Good' },
+  { min: 60, grade: 'C', gradePoint: 8, label: 'Good' },
+  { min: 50, grade: 'D', gradePoint: 7, label: 'Average' },
+  { min: 40, grade: 'E', gradePoint: 6, label: 'Below Average' },
+  { min: 0, grade: 'F', gradePoint: 5, label: 'Fail' },
+];
+
+function percentageToGrade(percentage) {
+  const band =
+    GRADE_SCALE.find((b) => percentage >= b.min) || GRADE_SCALE[GRADE_SCALE.length - 1];
+  return { grade: band.grade, gradePoint: band.gradePoint, label: band.label };
+}
+
+/**
+ * courses: the `courses` array as returned by calculatePercentage() — each
+ * item already has { code, percentage, status, ... }. Percentage is used
+ * (not raw marks) so the grade is always consistent with the number
+ * already shown to the student in the breakdown table.
+ *
+ * credits: a map of courseCode -> credit value (number), supplied by the
+ * student since we have no reliable way to look this up automatically.
+ * Courses missing a credit value are excluded from the CGPA total (rather
+ * than assumed to be some default), and reported back in `missingCredits`
+ * so the UI can prompt for them.
+ */
+function calculateCGPA(courses, credits) {
+  const rows = courses.map((c) => {
+    const rawCredit = credits ? credits[c.code] : undefined;
+    const credit = Number(rawCredit);
+    const hasCredit = Number.isFinite(credit) && credit > 0;
+    const isScored = c.percentage !== null && c.percentage !== undefined;
+
+    if (!isScored) {
+      return {
+        code: c.code,
+        credit: hasCredit ? credit : null,
+        grade: null,
+        gradePoint: null,
+        points: null,
+        status: c.status || 'PENDING',
+        included: false,
+      };
+    }
+
+    const { grade, gradePoint } = percentageToGrade(c.percentage);
+
+    if (!hasCredit) {
+      return {
+        code: c.code,
+        credit: null,
+        grade,
+        gradePoint,
+        points: null,
+        status: c.status,
+        included: false,
+      };
+    }
+
+    return {
+      code: c.code,
+      credit,
+      grade,
+      gradePoint,
+      points: gradePoint * credit,
+      status: c.status,
+      included: true,
+    };
+  });
+
+  const included = rows.filter((r) => r.included);
+  const totalCredits = included.reduce((sum, r) => sum + r.credit, 0);
+  const totalPoints = included.reduce((sum, r) => sum + r.points, 0);
+  const cgpa = totalCredits > 0 ? totalPoints / totalCredits : 0;
+
+  const missingCredits = rows
+    .filter((r) => r.grade !== null && r.credit === null)
+    .map((r) => r.code);
+
+  return {
+    courses: rows,
+    totalCredits,
+    totalPoints,
+    cgpa: Math.round(cgpa * 100) / 100,
+    missingCredits,
+    note:
+      'Grade points use a standard 10-point IGNOU scale that could not be officially verified for every programme — cross-check against your grade card if it looks off. Credits are entered by the student, not fetched from IGNOU.',
+  };
+}
+
+module.exports = {
+  calculatePercentage,
+  classifyCourse,
+  scoreCourse,
+  calculateCGPA,
+  percentageToGrade,
+  GRADE_SCALE,
+  CATEGORY_CONFIG,
+};

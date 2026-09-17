@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
-const { calculatePercentage, CATEGORY_CONFIG } = require('./calc');
+const { calculatePercentage, calculateCGPA, CATEGORY_CONFIG } = require('./calc');
 
 const app = express();
 app.use(cors());
@@ -252,6 +252,26 @@ app.post('/api/calculate', (req, res) => {
     return res.status(400).json({ error: 'courses must be a non-empty array.' });
   }
   const result = calculatePercentage(category, courses);
+  res.json(result);
+});
+
+// CGPA is computed from courses that have ALREADY been scored (i.e. the
+// `courses` array returned by /api/scrape or /api/calculate, each with a
+// `percentage` on it) plus a student-supplied credit per course code —
+// see the note in calc.js on why credits can't be looked up automatically.
+app.post('/api/cgpa', (req, res) => {
+  const { courses, credits } = req.body || {};
+
+  if (!Array.isArray(courses) || courses.length === 0) {
+    return res.status(400).json({ error: 'courses must be a non-empty array.' });
+  }
+  if (!credits || typeof credits !== 'object' || Array.isArray(credits)) {
+    return res
+      .status(400)
+      .json({ error: 'credits must be an object mapping course code to credit value.' });
+  }
+
+  const result = calculateCGPA(courses, credits);
   res.json(result);
 });
 

@@ -596,10 +596,10 @@ a {
 
 
 /* Meta LEFT */
-.result-meta {
+/* .result-meta {
   flex: 1;
   order: 1;
-}
+} */
 
 .result-label {
   display: block;
@@ -635,15 +635,16 @@ a {
 }
 
 .big-number {
-  width: 190px;
-  height: 190px;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid var(--card);
   border-radius: 50%;
   font-family: "Fraunces", serif;
-  font-size: 4.5rem;
+  font-size: 2.5rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -755,6 +756,146 @@ a {
 
 .course-table tbody tr:hover {
   background: rgba(255,255,255,0.07);
+}
+
+/* =========================================================
+   RESULT METRICS + CGPA UI
+   ========================================================= */
+
+.result-metrics {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 28px;
+  flex-shrink: 0;
+}
+
+.cgpa-result-top {
+  min-width: 150px;
+  /* padding-top: 17px; */
+  text-align: center;
+}
+
+.cgpa-number {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  font-family: "Fraunces", serif;
+  font-size: 2.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cgpa-sign {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.cgpa-result-top .percentage-label {
+  display: block;
+  margin-top: 10px;
+}
+
+.cgpa-result-top .muted {
+  max-width: 150px;
+  margin: 8px auto 0;
+  color: #c9d2e0;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+
+.cgpa-action-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cgpa-action-row .primary-btn {
+  width: auto;
+  min-width: 190px;
+}
+
+.cgpa-action-row .form-error {
+  flex: 1;
+  margin: 0;
+}
+
+/* Make all form controls comfortably tappable and prevent narrow credit inputs. */
+.card select,
+.card input[type="text"],
+.upload-card select,
+.contact-form input,
+.contact-form textarea,
+.course-table input,
+.course-table select {
+  min-height: 44px;
+}
+
+.course-table th,
+.course-table td {
+  white-space: nowrap;
+}
+
+.course-table th:first-child,
+.course-table td:first-child {
+  min-width: 105px;
+}
+
+.course-table th:nth-child(2),
+.course-table td:nth-child(2) {
+  min-width: 85px;
+}
+
+.course-table th:nth-child(3),
+.course-table td:nth-child(3),
+.course-table th:nth-child(4),
+.course-table td:nth-child(4),
+.course-table th:nth-child(5),
+.course-table td:nth-child(5) {
+  min-width: 105px;
+}
+
+.course-table th:last-child,
+.course-table td:last-child {
+  min-width: 105px;
+}
+
+/* If the credit field is an input inserted by JavaScript, give it room. */
+.course-table td input[type="number"],
+.course-table td input.credit-input,
+.course-table td .credit-input {
+  width: 88px !important;
+  min-width: 88px;
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 5px;
+  background: rgba(255,255,255,0.08);
+  color: var(--card);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8rem;
+  text-align: center;
+  outline: none;
+}
+
+.course-table td input[type="number"]:focus,
+.course-table td input.credit-input:focus,
+.course-table td .credit-input:focus {
+  border-color: var(--card);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+}
+
+.course-table td input[type="number"]::placeholder,
+.course-table td input.credit-input::placeholder,
+.course-table td .credit-input::placeholder {
+  color: #aeb8c7;
 }
 
 
@@ -1027,6 +1168,31 @@ a {
     padding-left: 0;
   }
 
+  .result-top {
+    align-items: flex-start;
+    gap: 30px;
+  }
+
+  .result-metrics {
+    gap: 18px;
+  }
+
+  .big-number {
+    width: 155px;
+    height: 155px;
+    font-size: 2.5rem;
+  }
+
+  .cgpa-result-top {
+    min-width: 125px;
+  }
+
+  .cgpa-number {
+    width: 150px;
+    height: 150px;
+    font-size: 2.7rem;
+  }
+
   .fetch-panel {
     padding: 0 0 35px;
   }
@@ -1103,23 +1269,6 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .result-top {
-    flex-direction: column-reverse;
-    align-items: flex-start;
-  }
-
-  .big-number-wrap {
-    align-self: center;
-  }
-
-  .result-meta {
-    width: 100%;
-  }
-
-  .stat-row {
-    grid-template-columns: 1fr;
-  }
-
   .footer-top {
     grid-template-columns: 1fr;
   }
@@ -1130,6 +1279,102 @@ a {
   }
 }
 
+
+@media (max-width: 680px) {
+  .results {
+    padding: 45px 0;
+  }
+
+  .result-top {
+    flex-direction: column;
+    gap: 28px;
+    padding-bottom: 28px;
+  }
+
+  .result-meta {
+    width: 100%;
+  }
+
+  .result-name {
+    font-size: 1.65rem;
+  }
+
+  .result-metrics {
+    width: 100%;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .big-number {
+    width: 140px;
+    height: 140px;
+    font-size: 2.2rem;
+  }
+
+  .cgpa-result-top {
+    min-width: 120px;
+  }
+
+  .cgpa-number {
+    width: 140px;
+    height: 140px;
+    font-size: 2.4rem;
+  }
+
+  .cgpa-sign {
+    font-size: 0.95rem;
+  }
+
+  .stat-row {
+    grid-template-columns: 1fr;
+    margin-bottom: 30px;
+  }
+
+  .stat-box {
+    padding: 14px 16px;
+  }
+
+  .table-head-row {
+    gap: 12px;
+  }
+
+  .table-head-row h3 {
+    font-size: 1.05rem;
+  }
+
+  #printBtn {
+    flex-shrink: 0;
+  }
+
+  .cgpa-action-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cgpa-action-row .primary-btn {
+    width: 100%;
+  }
+
+  .cgpa-action-row .form-error {
+    width: 100%;
+  }
+
+  .course-table {
+    min-width: 760px;
+  }
+
+  .course-table th,
+  .course-table td {
+    padding: 9px 8px;
+  }
+
+  .course-table td input[type="number"],
+  .course-table td input.credit-input,
+  .course-table td .credit-input {
+    width: 86px !important;
+    min-width: 86px;
+  }
+}
 
 /* Mobile */
 @media (max-width: 520px) {
@@ -1152,12 +1397,6 @@ a {
     font-size: 1.7rem;
   }
 
-  .big-number {
-    width: 155px;
-    height: 155px;
-    font-size: 3.4rem;
-  }
-
   .form-row {
     grid-template-columns: 1fr;
     gap: 0;
@@ -1170,6 +1409,36 @@ a {
   .info-section,
   .contact-section {
     padding: 65px 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .result-metrics {
+    gap: 10px;
+  }
+
+  .big-number {
+    width: 126px;
+    height: 126px;
+    font-size: 2.0rem;
+  }
+
+  .cgpa-result-top {
+    min-width: 108px;
+  }
+
+  .cgpa-number {
+    width: 126px;
+    height: 126px;
+    font-size: 2.0rem;
+  }
+
+  .pct-sign {
+    font-size: 1.3rem;
+  }
+
+  .percentage-label {
+    font-size: 0.58rem;
   }
 }
 

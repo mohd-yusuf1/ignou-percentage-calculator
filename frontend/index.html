@@ -4,48 +4,48 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="5cE9YYUwUjyDbsoS-Invnfmkciq2VSKXMtPmf-ZHuAI" />
-
+ 
   <!-- ===== Primary SEO ===== -->
-  <title>IGNOU Percentage Calculator — Calculate Your Real IGNOU % Instantly</title>
+  <title>IGNOU Percentage & CGPA Calculator — Calculate Your Real IGNOU % and CGPA Instantly</title>
   <meta
     name="description"
-    content="Free IGNOU percentage calculator. Fetch your grade card automatically or upload the PDF and instantly calculate your real IGNOU percentage using the official 30% assignment + 70% term-end weighting formula."
+    content="Free IGNOU percentage and CGPA calculator. Fetch your grade card automatically or upload the PDF (faster) and instantly calculate your real IGNOU percentage using the official 30% assignment + 70% term-end weighting formula, then convert it to CGPA on IGNOU's 10-point scale."
   />
   <meta
     name="keywords"
-    content="IGNOU percentage calculator, IGNOU grade card, IGNOU percentage, calculate IGNOU marks, IGNOU CGPA to percentage, IGNOU result calculator, IGNOU grade card percentage, IGNOU marksheet calculator"
+    content="IGNOU percentage calculator, IGNOU CGPA calculator, IGNOU grade card, IGNOU percentage, IGNOU percentage to CGPA, calculate IGNOU marks, IGNOU CGPA to percentage, IGNOU result calculator, IGNOU grade card percentage, IGNOU marksheet calculator"
   />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <meta name="author" content="IGNOU%" />
   <meta name="language" content="English" />
   <link rel="canonical" href="https://ignou-percentage-calculator.pages.dev/" />
-
-  <!-- ===== Icons / theme ===== -->
-  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-  <link rel="apple-touch-icon" href="/assets/logo.svg" />
+ 
+  <!-- ===== Favicon ===== -->
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="/assets/favicon.png" />
   <meta name="theme-color" content="#0b1220" />
-
+ 
   <!-- ===== Open Graph (Facebook, LinkedIn, WhatsApp, etc.) ===== -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="IGNOU%" />
-  <meta property="og:title" content="IGNOU Percentage Calculator — Calculate Your Real IGNOU %" />
+  <meta property="og:title" content="IGNOU Percentage & CGPA Calculator — Calculate Your Real IGNOU % and CGPA" />
   <meta
     property="og:description"
-    content="Fetch your grade card automatically or upload the PDF and instantly calculate your real IGNOU percentage using the correct course weighting system."
+    content="Fetch your grade card automatically or upload the PDF (faster) and instantly calculate your real IGNOU percentage and CGPA using the correct course weighting system."
   />
   <meta property="og:url" content="https://ignou-percentage-calculator.pages.dev/" />
   <meta property="og:image" content="https://ignou-percentage-calculator.pages.dev/assets/logo.svg" />
   <meta property="og:locale" content="en_IN" />
-
+ 
   <!-- ===== Twitter Card ===== -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="IGNOU Percentage Calculator — Calculate Your Real IGNOU %" />
+  <meta name="twitter:title" content="IGNOU Percentage & CGPA Calculator — Calculate Your Real IGNOU % and CGPA" />
   <meta
     name="twitter:description"
-    content="Fetch your grade card automatically or upload the PDF and instantly calculate your real IGNOU percentage."
+    content="Fetch your grade card automatically or upload the PDF (faster) and instantly calculate your real IGNOU percentage and CGPA."
   />
   <meta name="twitter:image" content="https://ignou-percentage-calculator.pages.dev/assets/logo.svg" />
-
+ 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -57,7 +57,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   >
   <link rel="stylesheet" href="style.css" />
-
+ 
   <!-- ===== Structured data (JSON-LD) ===== -->
   <script type="application/ld+json">
   {
@@ -65,7 +65,8 @@
     "@type": "WebApplication",
     "name": "IGNOU%",
     "url": "https://ignou-percentage-calculator.pages.dev/",
-    "description": "Free tool to calculate your real IGNOU percentage from your grade card, using the official assignment and term-end marks weighting system.",
+    "logo": "https://ignou-percentage-calculator.pages.dev/assets/logo.svg",
+    "description": "Free tool to calculate your real IGNOU percentage and CGPA from your grade card, using the official assignment and term-end marks weighting system. CGPA is derived from the calculated percentage of each course.",
     "applicationCategory": "EducationApplication",
     "operatingSystem": "Any",
     "offers": {
@@ -75,7 +76,7 @@
     }
   }
   </script>
-
+ 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -102,7 +103,7 @@
         "name": "Can I upload my grade card instead?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Download your grade card PDF from IGNOU, select your programme category and upload the PDF."
+          "text": "Yes, and it's the faster option. Download your grade card PDF from IGNOU, select your programme category and upload the PDF instead of waiting on the automatic fetch."
         }
       },
       {
@@ -112,18 +113,26 @@
           "@type": "Answer",
           "text": "The result is an estimated calculation. Use it as a convenient reference and verify it against official IGNOU documentation."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I calculate my CGPA too?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Once your percentage is calculated, add each course's credit value and the tool converts your course-wise percentages into a CGPA on IGNOU's 10-point scale. CGPA can only be calculated after the percentage step, since it's derived from those results."
+        }
       }
     ]
   }
   </script>
 </head>
-
+ 
 <body>
-
+ 
 <!-- =====================================================
      HEADER
 ===================================================== -->
-
+ 
 <header class="site-header">
   <div class="nav-wrap">
     <a href="/" class="brand" aria-label="IGNOU Percentage Calculator">
@@ -133,7 +142,7 @@
         class="brand-logo"
       >
     </a>
-
+ 
     <button
       class="mobile-menu-btn"
       id="mobileMenuBtn"
@@ -142,13 +151,13 @@
     >
       ☰
     </button>
-
+ 
     <nav class="main-nav" id="mainNav">
       <a href="#" class="active">Home</a>
       <a href="#upload">Upload PDF</a>
       <a href="#how-it-works">How It Works</a>
       <a href="#faq">FAQ</a>
-
+ 
       <a href="#contact" class="nav-message-btn">
         <span>✉</span>
         Send Message
@@ -156,27 +165,28 @@
     </nav>
   </div>
 </header>
-
+ 
 <main>
 <!-- =====================================================
      HERO + FETCH
 ===================================================== -->
-
+ 
 <section class="hero-fetch-section">
   <section class="hero">
     <div class="wrap">
       <div class="hero-content">
         <span class="eyebrow">
-          IGNOU GRADE CARD CALCULATOR
+          IGNOU GRADE CARD PERCENTAGE &amp; CGPA CALCULATOR
         </span>
         <h1>
           Your grade card gives you letters and marks.
-          <span>Not the number you actually need.</span>
+          <span>Not the percentage or CGPA you actually need.</span>
         </h1>
         <p class="dek">
           Calculate your actual IGNOU percentage using the correct
-          weighting system. Fetch your grade card automatically or
-          upload your PDF and let us do the calculation.
+          weighting system, then convert it straight to CGPA. Fetch
+          your grade card automatically, or upload your PDF for a
+          faster result, and let us do the calculation.
         </p>
         <div class="hero-features">
           <div class="hero-feature">
@@ -186,27 +196,27 @@
               <small>No manual calculation</small>
             </div>
           </div>
-
+ 
           <div class="hero-feature">
             <span class="feature-icon">⚡</span>
             <div>
               <strong>Fast</strong>
-              <small>Get your result quickly</small>
+              <small>PDF upload gives the quickest result</small>
             </div>
           </div>
-
+ 
           <div class="hero-feature">
             <span class="feature-icon">◎</span>
             <div>
-              <strong>Accurate</strong>
-              <small>Uses course weighting</small>
+              <strong>Percentage + CGPA</strong>
+              <small>Calculate CGPA right after your percentage</small>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
+ 
   <!-- FETCH -->
   <section class="panel fetch-panel" id="fetch">
     <div class="wrap">
@@ -215,17 +225,18 @@
           <span class="tag">
             OPTION 1
           </span>
-
+ 
           <h2>
             Fetch it automatically
           </h2>
-
+ 
           <p>
             Enter your programme and enrollment number.
             We'll retrieve the grade card from the IGNOU portal.
+            This can take a little longer than uploading a PDF directly.
           </p>
         </div>
-
+ 
         <form id="scrapeForm" class="card">
           <label>
             Category
@@ -233,25 +244,25 @@
               <option value="" disabled selected>
                 Choose category
               </option>
-
+ 
               <option value="bca_mca_mp_mpb_pgdca_mba">
                 BCA/MCA/MP/MPB/PGDCA/MBA/MBF
               </option>
-
+ 
               <option value="bdp_ba_bcom_bsc_asso">
                 BDP/BA/B.COM/B.Sc./ASSO
               </option>
-
+ 
               <option value="cbcs">
                 CBCS Programmes
               </option>
-
+ 
               <option value="other">
                 Other Programmes
               </option>
             </select>
           </label>
-
+ 
           <label>
             Programme code
             <input
@@ -261,7 +272,7 @@
               required
             />
           </label>
-
+ 
           <label>
             Enrollment number
             <input
@@ -273,17 +284,17 @@
               required
             />
           </label>
-
+ 
           <p class="hint">
             Your enrollment number is used only to retrieve
             your grade card.
           </p>
-
+ 
           <button type="submit" class="primary-btn">
             Fetch &amp; Calculate
             <span>→</span>
           </button>
-
+ 
           <p
             class="form-error"
             id="scrapeError"
@@ -294,7 +305,7 @@
     </div>
   </section>
 </section>
-
+ 
 <!-- =====================================================
      UPLOAD PDF
 ===================================================== -->
@@ -303,20 +314,21 @@
     <div class="upload-layout">
       <div class="panel-head">
         <span class="tag">
-          OPTION 2
+          OPTION 2 · FASTEST
         </span>
-
+ 
         <h2>
           Upload your grade card PDF
         </h2>
-
+ 
         <p>
-          Already downloaded your grade card?
-          Upload it here and we'll read the course table
+          Already downloaded your grade card? Upload it here for the
+          quickest result — reading a PDF is faster than fetching it
+          live from the IGNOU portal — and we'll read the course table
           automatically.
         </p>
       </div>
-
+ 
       <form id="uploadForm" class="upload-card">
         <label>
           Category
@@ -324,26 +336,26 @@
             <option value="" disabled selected>
               Choose category
             </option>
-
+ 
             <option value="bca_mca_mp_mpb_pgdca_mba">
               BCA/MCA/MP/MPB/PGDCA/MBA/MBF
             </option>
-
+ 
             <option value="bdp_ba_bcom_bsc_asso">
               BDP/BA/B.COM/B.Sc./ASSO
             </option>
-
+ 
             <option value="cbcs">
               CBCS Programmes
             </option>
-
+ 
             <option value="other">
               Other Programmes
             </option>
           </select>
         </label>
-
-
+ 
+ 
         <label class="dropzone" id="dropzone">
           <input
             type="file"
@@ -351,17 +363,17 @@
             accept="application/pdf"
             hidden
           />
-
+ 
           <div class="upload-icon">
             ↑
           </div>
-
+ 
           <span id="dropzoneLabel">
             Drop your grade card PDF here
             <small>or click to browse</small>
           </span>
         </label>
-
+ 
         <button
           type="submit"
           class="primary-btn"
@@ -369,7 +381,7 @@
           Read PDF &amp; Calculate
           <span>→</span>
         </button>
-
+ 
         <p
           class="form-error"
           id="uploadError"
@@ -379,84 +391,99 @@
     </div>
   </div>
 </section>
-
-
+ 
+ 
 <!-- =====================================================
      HOW IT WORKS
 ===================================================== -->
-
+ 
 <section class="info-section" id="how-it-works">
   <div class="wrap">
     <div class="section-heading">
       <span class="eyebrow">
         HOW IT WORKS
       </span>
-
+ 
       <h2>
-        Three steps. That's it.
+        Four steps. That's it.
       </h2>
-
+ 
       <p>
         No spreadsheet. No calculator. No guessing.
       </p>
     </div>
-
-
+ 
+ 
     <div class="steps">
       <div class="step">
         <span class="step-number">
           01
         </span>
-
+ 
         <h3>
           Choose a method
         </h3>
-
+ 
         <p>
-          Fetch your grade card automatically or upload
-          the PDF downloaded from IGNOU.
+          Upload the PDF downloaded from IGNOU for the fastest result,
+          or fetch your grade card automatically instead.
         </p>
       </div>
-
+ 
       <div class="step">
         <span class="step-number">
           02
         </span>
-
+ 
         <h3>
           We read the marks
         </h3>
-
+ 
         <p>
           Your course-wise continuous assessment and
           term-end marks are extracted.
         </p>
       </div>
-
-
+ 
+ 
       <div class="step">
         <span class="step-number">
           03
         </span>
-
+ 
         <h3>
           Get your percentage
         </h3>
-
+ 
         <p>
           The marks are weighted according to the selected
           programme calculation method.
         </p>
       </div>
+ 
+      <div class="step">
+        <span class="step-number">
+          04
+        </span>
+ 
+        <h3>
+          Calculate your CGPA
+        </h3>
+ 
+        <p>
+          Once your percentage is ready, add each course's credits
+          to convert it into a CGPA on IGNOU's 10-point scale.
+        </p>
+      </div>
     </div>
   </div>
 </section>
-
-
+ 
+ 
 <!-- =====================================================
      RESULTS
 ===================================================== -->
-
+ 
 <section class="panel results" id="results" hidden>
   <div class="wrap">
     <div class="result-top">
@@ -466,23 +493,34 @@
         <p id="resultProgramme" class="muted"></p>
         <p id="resultFormula" class="muted"></p>
       </div>
-
-      <div class="big-number-wrap">
-        <div class="big-number">
-          <span id="resultPercent">--</span>
-          <span class="pct-sign">%</span>
+ 
+      <div class="result-metrics">
+        <div class="big-number-wrap">
+          <div class="big-number">
+            <span id="resultPercent">--</span>
+            <span class="pct-sign">%</span>
+          </div>
+          <span class="percentage-label">YOUR PERCENTAGE</span>
         </div>
-        <span class="percentage-label">YOUR PERCENTAGE</span>
+ 
+        <div class="cgpa-result-top" id="cgpaResult" hidden>
+          <div class="cgpa-number">
+            <span id="cgpaValue">--</span>
+            <span class="cgpa-sign">/10</span>
+          </div>
+          <span class="percentage-label">YOUR CGPA</span>
+          <p id="cgpaMeta" class="muted"></p>
+        </div>
       </div>
     </div>
-
+ 
     <div class="stat-row" id="statRow"></div>
-
+ 
     <div class="table-head-row">
       <h3>Course-wise breakdown</h3>
       <button type="button" id="printBtn">Print result</button>
     </div>
-
+ 
     <div class="table-scroll">
       <table class="course-table">
         <thead>
@@ -492,103 +530,148 @@
             <th>Continuous</th>
             <th>Term-End</th>
             <th>Weighted %</th>
+            <th>Grade</th>
+            <th>Credits</th>
           </tr>
         </thead>
         <tbody id="resultTableBody"></tbody>
       </table>
     </div>
+ 
+    <!-- CGPA controls -->
+    <div class="cgpa-panel" id="cgpaPanel">
+      <div class="panel-head">
+        <h3>Add course credits to calculate CGPA</h3>
+        <p>
+          Your percentage is calculated first — CGPA is worked out from
+          those results, so this step only appears once your percentage
+          above is ready. Enter the credit value for each course above
+          (from your grade card or programme guide — IGNOU doesn't
+          expose this on the portal page we read, so we can't fill it in
+          for you). Grades are derived from the percentage already
+          calculated for each course, using IGNOU's standard 10-point
+          scale (A = 10 down to F = 5). Some older or non-CBCS
+          programmes are known to use a different scale, so treat this
+          as a close estimate and check your official grade card if a
+          grade looks off.
+        </p>
+      </div>
+ 
+      <div class="cgpa-action-row">
+        <button type="button" id="calcCgpaBtn" class="primary-btn">
+          Calculate CGPA
+        </button>
+        <p class="form-error" id="cgpaError" hidden></p>
+      </div>
+    </div>
   </div>
 </section>
-
+ 
 <!-- =====================================================
      FAQ
 ===================================================== -->
-
+ 
 <section class="info-section faq-section" id="faq">
   <div class="wrap">
     <div class="section-heading">
       <span class="eyebrow">FAQ</span>
       <h2>Frequently asked questions</h2>
     </div>
-
+ 
     <div class="faq-list">
       <details>
         <summary>
           Is this an official IGNOU website?
           <span>+</span>
         </summary>
-
+ 
         <p>
           No. IGNOU% is an independent tool.
           Always verify your final result against your official
           IGNOU grade card and marksheet.
         </p>
       </details>
-
+ 
       <details>
         <summary>
           Do you store my enrollment number?
           <span>+</span>
         </summary>
-
+ 
         <p>
           The frontend does not intentionally store your
           enrollment number. It is used to retrieve your
           grade card.
         </p>
       </details>
-
-
+ 
+ 
       <details>
         <summary>
           Can I upload my grade card instead?
           <span>+</span>
         </summary>
-
+ 
         <p>
-          Yes. Download your grade card PDF from IGNOU,
-          select your programme category and upload the PDF.
+          Yes, and it's the faster option. Download your grade card
+          PDF from IGNOU, select your programme category and upload
+          the PDF instead of waiting on the automatic fetch.
         </p>
       </details>
-
-
+ 
+ 
       <details>
         <summary>
           Is the calculated percentage accurate?
           <span>+</span>
         </summary>
-
+ 
         <p>
           The result is an estimated calculation. Use it
           as a convenient reference and verify it against
           official IGNOU documentation.
         </p>
       </details>
+ 
+      <details>
+        <summary>
+          Can I calculate my CGPA too?
+          <span>+</span>
+        </summary>
+ 
+        <p>
+          Yes. Once your percentage is calculated, enter each course's
+          credit value and the tool converts your course-wise
+          percentages into a CGPA on IGNOU's 10-point scale. CGPA can
+          only be calculated after the percentage step, since it's
+          derived directly from those results.
+        </p>
+      </details>
     </div>
   </div>
 </section>
-
+ 
 <!-- =====================================================
      CONTACT
 ===================================================== -->
-
+ 
 <section class="contact-section" id="contact">
   <div class="wrap">
     <div class="contact-layout">
       <div class="contact-copy">
         <span class="eyebrow">GET IN TOUCH</span>
-
+ 
         <h2>
           Found something wrong?
           Have an idea?
         </h2>
-
+ 
         <p>
           If you notice a calculation issue, have a programme
           that isn't supported, or simply want to suggest
           an improvement, send us a message.
         </p>
-
+ 
         <div class="contact-note">
           <span>✉</span>
           <div>
@@ -597,7 +680,7 @@
           </div>
         </div>
       </div>
-
+ 
       <div class="contact-form" id="contactForm">
         <div class="form-row">
           <div class="form-group">
@@ -608,7 +691,7 @@
                 placeholder="Your name"
               >
           </div>
-
+ 
           <div class="form-group">
             <span>Your email</span>
               <input
@@ -618,7 +701,7 @@
               >
           </div>
         </div>
-
+ 
         <div class="form-group">
           <span>Subject</span>
           <input
@@ -627,7 +710,7 @@
             placeholder="What would you like to tell us?"
           >
         </div>
-
+ 
         <div class="form-group">
           <span>Message</span>
           <textarea
@@ -636,7 +719,7 @@
             placeholder="Write your message here..."
           ></textarea>
         </div>
-
+ 
         <button
           type="button"
           class="primary-btn"
@@ -650,16 +733,16 @@
   </div>
 </section>
 </main>
-
-
+ 
+ 
 <!-- =====================================================
      FOOTER
 ===================================================== -->
-
+ 
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-top">
-
+ 
       <div class="footer-brand">
         <a href="/" class="brand" aria-label="IGNOU Percentage Calculator">
           <img
@@ -668,31 +751,31 @@
               class="brand-logo"
           >
         </a>
-
+ 
         <p>
           A simple tool for understanding
-          your IGNOU grade card percentage.
+          your IGNOU grade card percentage and CGPA.
         </p>
       </div>
-
+ 
       <div class="footer-links">
-
+ 
         <div>
           <h4>Calculator</h4>
           <a href="#fetch">Fetch Grade Card</a>
-          <a href="#upload">Upload PDF</a>
+          <a href="#upload">Upload PDF (Faster)</a>
           <a href="#how-it-works">How It Works</a>
         </div>
-
+ 
         <div>
           <h4>Help</h4>
           <a href="#faq">FAQ</a>
           <a href="#contact">Contact</a>
         </div>
-
+ 
         <div>
           <h4>Connect</h4>
-
+ 
           <div class="footer-social">
             <a
               href="https://github.com/mohd-yusuf1"
@@ -704,7 +787,7 @@
               <i class="fa-brands fa-github"></i>
               <span>GitHub</span>
             </a>
-
+ 
             <a
               href="https://www.linkedin.com/in/mohammad-yusuf-8419b9333/"
               target="_blank"
@@ -717,16 +800,16 @@
             </a>
           </div>
         </div>
-
+ 
       </div>
     </div>
-
+ 
     <div class="footer-bottom">
       <p>
         © <span id="currentYear"></span> IGNOU%.
         All rights reserved.
       </p>
-
+ 
       <p>
         This tool. Not affiliated with IGNOU.
       </p>

@@ -9,6 +9,11 @@ const API = window.API_BASE_URL;
 //   return { label: 'Below Pass Mark', class: 'low' };
 // }
 
+// Courses from the most recently rendered result, kept around purely so
+// the "Calculate CGPA" button can send them (with credits the student
+// enters) to /api/cgpa without re-fetching or re-parsing anything.
+let lastCourseData = [];
+
 function renderResults(data) {
   const section = document.getElementById('results');
   section.hidden = false;
@@ -31,6 +36,8 @@ function renderResults(data) {
     <div class="stat-box"><span class="stat-value">${data.pendingCount}</span><span class="stat-label">pending</span></div>
   `;
 
+  lastCourseData = data.courses;
+
   const tbody = document.getElementById('resultTableBody');
   tbody.innerHTML = '';
   data.courses.forEach((c) => {
@@ -39,15 +46,34 @@ function renderResults(data) {
       c.percentage !== null
         ? `${c.percentage.toFixed(2)}%`
         : `<span class="status-pending">${c.status || 'pending'}</span>`;
+
     tr.innerHTML = `
       <td>${c.code}</td>
       <td><span class="type-badge type-${c.type}">${c.type}</span></td>
       <td>${c.continuousMark}</td>
       <td>${c.termEndMark}</td>
       <td>${pctCell}</td>
+      <td class="grade-cell" id="grade-${c.code}">–</td>
+      <td>
+        <input
+          type="number"
+          class="credit-input"
+          id="credit-${c.code}"
+          min="1"
+          max="12"
+          step="1"
+          placeholder="e.g. 4"
+          ${c.percentage === null ? 'disabled' : ''}
+        />
+      </td>
     `;
     tbody.appendChild(tr);
   });
+
+  // Reset any CGPA result from a previous calculation — it belonged to
+  // the previous set of courses.
+  document.getElementById('cgpaResult').hidden = true;
+  hideError('cgpaError');
 
   section.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -94,6 +120,7 @@ document.getElementById('scrapeForm').addEventListener('submit', async (e) => {
   btn.disabled = true;
   btn.textContent = 'Fetching from IGNOU…';
   try {
+    console.log('Sending request to backend API:', `${API}`)
     const res = await fetch(`${API}/api/scrape`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -221,5 +248,77 @@ document.getElementById('uploadForm').addEventListener('submit', async (e) => {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Read PDF & calculate';
+  }
+});
+
+/* ---------------- 3) CGPA flow ---------------- */
+// Runs entirely off the courses already scored above (lastCourseData) plus
+// whatever credit values the student types into the table. Nothing here
+// re-fetches from IGNOU — it's a second calculation layered on the same
+// result the student already sees.
+
+document.getElementById('calcCgpaBtn').addEventListener('click', async () => {
+  hideError('cgpaError');
+
+  if (!lastCourseData.length) {
+    showError('cgpaError', 'Calculate your percentage first, then enter credits above.');
+    return;
+  }
+
+  const credits = {};
+  let anyCredit = false;
+
+  lastCourseData.forEach((c) => {
+    const input = document.getElementById(`credit-${c.code}`);
+    const val = input ? Number(input.value) : NaN;
+    if (Number.isFinite(val) && val > 0) {
+      credits[c.code] = val;
+      anyCredit = true;
+    }
+  });
+
+  if (!anyCredit) {
+    showError('cgpaError', 'Enter at least one course credit in the table above to calculate CGPA.');
+    return;
+  }
+
+  const btn = document.getElementById('calcCgpaBtn');
+  btn.disabled = true;
+  btn.textContent = 'Calculating…';
+
+  try {
+    const res = await fetch(`${API}/api/cgpa`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ courses: lastCourseData, credits }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+
+    // Fill in the Grade column for every course we now have a grade for
+    // (even ones without a credit yet, so the student can see the letter
+    // grade before deciding what credit to enter).
+    data.courses.forEach((row) => {
+      const cell = document.getElementById(`grade-${row.code}`);
+      if (cell) {
+        cell.textContent = row.grade ? `${row.grade} (${row.gradePoint})` : '–';
+      }
+    });
+
+    const resultBox = document.getElementById('cgpaResult');
+    resultBox.hidden = false;
+    document.getElementById('cgpaValue').textContent = data.cgpa.toFixed(2);
+
+    const includedCount = data.courses.filter((c) => c.included).length;
+    let meta = `Based on ${includedCount} course${includedCount === 1 ? '' : 's'} with credits entered, totalling ${data.totalCredits} credit${data.totalCredits === 1 ? '' : 's'}.`;
+    if (data.missingCredits.length) {
+      meta += ` Enter credits for ${data.missingCredits.join(', ')} to include them too.`;
+    }
+    document.getElementById('cgpaMeta').textContent = meta;
+  } catch (err) {
+    showError('cgpaError', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Calculate CGPA';
   }
 });
