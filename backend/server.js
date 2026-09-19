@@ -306,10 +306,7 @@ app.post('/api/parse-pdf', upload.single('file'), async (req, res) => {
 
   try {
     const cleanedText = await extractTextFromPdfBuffer(req.file.buffer);
-    console.log('parse-pdf extracted text (first 500 chars):', cleanedText.slice(0, 500));
-
     const courses = parseCoursesFromText(cleanedText);
-    console.log('parse-pdf matched courses:', courses.length);
 
     if (!courses.length) {
       return res.status(422).json({
