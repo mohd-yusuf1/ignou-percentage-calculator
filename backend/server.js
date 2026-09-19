@@ -286,6 +286,14 @@ app.post('/api/parse-pdf', upload.single('file'), async (req, res) => {
     return res.status(400).json({ error: 'No PDF file received.' });
   }
 
+  const isPdf = req.file.buffer.length > 4 && req.file.buffer.slice(0, 4).toString('ascii') === '%PDF';
+  if (!isPdf) {
+    console.warn(`parse-pdf: received ${req.file.buffer.length} bytes, missing %PDF header`);
+    return res.status(400).json({
+      error: 'The uploaded file did not arrive correctly. Please try selecting the PDF again.',
+    });
+  }
+  
   try {
     const { text } = await pdfParse(req.file.buffer);
     const cleanedText = text.replace(/\s+/g, ' ');
