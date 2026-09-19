@@ -202,7 +202,12 @@ function parseCoursesFromText(text) {
 }
 
 async function extractTextFromPdfBuffer(buffer) {
-  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  // pdfjs-dist rejects a Node Buffer outright (even though Buffer extends
+  // Uint8Array) — it wants a plain Uint8Array. This wraps the same
+  // underlying bytes with no copy, just a type-compatible view.
+  const uint8Array = new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+
+  const pdf = await pdfjsLib.getDocument({ data: uint8Array }).promise;
   let fullText = '';
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
