@@ -3,7 +3,8 @@ const cors = require('cors');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const multer = require('multer'); // For handling file uploads in mobile app
-const pdfParse = require('pdf-parse'); // For parsing PDF files in mobile app
+// const pdfParse = require('pdf-parse'); // For parsing PDF files in mobile app
+const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
 const { calculatePercentage, calculateCGPA, CATEGORY_CONFIG } = require('./calc');
 
 const app = express();
@@ -200,6 +201,18 @@ function parseCoursesFromText(text) {
   return courses;
 }
 
+async function extractTextFromPdfBuffer(buffer) {
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map((item) => item.str).join(' ');
+    fullText += pageText + ' ';
+  }
+  return fullText.replace(/\s+/g, ' ');
+}
+
 app.get('/api/categories', (req, res) => {
   const categories = Object.entries(CATEGORY_CONFIG).map(([id, cfg]) => ({
     id,
@@ -286,23 +299,16 @@ app.post('/api/parse-pdf', upload.single('file'), async (req, res) => {
     return res.status(400).json({ error: 'No PDF file received.' });
   }
 
-  const isPdf = req.file.buffer.length > 4 && req.file.buffer.slice(0, 4).toString('ascii') === '%PDF';
-  if (!isPdf) {
-    console.warn(`parse-pdf: received ${req.file.buffer.length} bytes, missing %PDF header`);
-    return res.status(400).json({
-      error: 'The uploaded file did not arrive correctly. Please try selecting the PDF again.',
-    });
-  }
-  
   try {
-    const { text } = await pdfParse(req.file.buffer);
-    const cleanedText = text.replace(/\s+/g, ' ');
+    const cleanedText = await extractTextFromPdfBuffer(req.file.buffer);
+    console.log('parse-pdf extracted text (first 500 chars):', cleanedText.slice(0, 500));
+
     const courses = parseCoursesFromText(cleanedText);
+    console.log('parse-pdf matched courses:', courses.length);
 
     if (!courses.length) {
       return res.status(422).json({
-        error:
-          "Couldn't find a course table in this PDF. Double-check it's an IGNOU grade card export.",
+        error: "Couldn't find a course table in this PDF. Double-check it's an IGNOU grade card export.",
       });
     }
 
